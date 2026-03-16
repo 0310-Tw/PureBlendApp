@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/services/cart_service.dart';
 import 'package:provider/provider.dart';
 
 import 'app/app.dart';

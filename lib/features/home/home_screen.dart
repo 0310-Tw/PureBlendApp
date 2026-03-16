@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colours.dart';
+import 'package:frontend/core/services/cart_service.dart';
 import 'package:provider/provider.dart';
+
 import '../../app/routes.dart';
 import '../../core/providers/auth_provider.dart';
+import '../../core/providers/cart_provider.dart';
 import '../../core/providers/smoothie_provider.dart';
 import '../../core/widgets/app_loader.dart';
 import '../../core/widgets/section_title.dart';
@@ -19,8 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      context.read<SmoothieProvider>().fetchSmoothies();
+    Future.microtask(() async {
+      await context.read<SmoothieProvider>().fetchSmoothies();
+      await context.read<CartProvider>().fetchCart();
     });
   }
 
@@ -44,23 +48,51 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
     final smoothieProvider = context.watch<SmoothieProvider>();
+    final cartProvider = context.watch<CartProvider>();
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Hi, ${authProvider.user?.fullName.split(' ').first ?? 'Guest'}'),
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.cart);
-            },
-            icon: const Icon(Icons.shopping_cart_outlined),
+          Stack(
+            alignment: Alignment.topRight,
+            children: [
+              IconButton(
+                onPressed: () async {
+                  await Navigator.pushNamed(context, AppRoutes.cart);
+                  if (!mounted) return;
+                  await context.read<CartProvider>().fetchCart();
+                },
+                icon: const Icon(Icons.shopping_cart_outlined),
+              ),
+              if (cartProvider.itemCount > 0)
+                Container(
+                  margin: const EdgeInsets.only(top: 8, right: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: const BoxDecoration(
+                    color: AppColors.berryPink,
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  child: Text(
+                    '${cartProvider.itemCount}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ],
       ),
       body: smoothieProvider.isLoading
           ? const AppLoader()
           : RefreshIndicator(
-              onRefresh: () => smoothieProvider.fetchSmoothies(),
+              onRefresh: () async {
+                await smoothieProvider.fetchSmoothies();
+                await context.read<CartProvider>().fetchCart();
+              },
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
@@ -111,12 +143,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: 180,
                           child: SmoothieCard(
                             smoothie: smoothie,
-                            onTap: () {
-                              Navigator.pushNamed(
+                            onTap: () async {
+                              await Navigator.pushNamed(
                                 context,
                                 AppRoutes.smoothieDetails,
                                 arguments: smoothie.id,
                               );
+                              if (!mounted) return;
+                              await context.read<CartProvider>().fetchCart();
                             },
                           ),
                         );
@@ -140,12 +174,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       final smoothie = smoothieProvider.smoothies[index];
                       return SmoothieCard(
                         smoothie: smoothie,
-                        onTap: () {
-                          Navigator.pushNamed(
+                        onTap: () async {
+                          await Navigator.pushNamed(
                             context,
                             AppRoutes.smoothieDetails,
                             arguments: smoothie.id,
                           );
+                          if (!mounted) return;
+                          await context.read<CartProvider>().fetchCart();
                         },
                       );
                     },
