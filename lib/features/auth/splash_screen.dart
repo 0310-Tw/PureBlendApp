@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../app/routes.dart';
 import '../../core/providers/auth_provider.dart';
+import '../../core/providers/profile_provider.dart';
 import '../../core/widgets/app_loader.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -26,6 +26,8 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return;
 
     if (authProvider.isLoggedIn) {
+      await context.read<ProfileProvider>().fetchProfile();
+      if (!mounted) return;
       Navigator.pushReplacementNamed(context, AppRoutes.home);
     } else {
       Navigator.pushReplacementNamed(context, AppRoutes.welcome);

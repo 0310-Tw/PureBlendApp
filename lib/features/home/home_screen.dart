@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colours.dart';
-import 'package:frontend/core/services/cart_service.dart';
 import 'package:provider/provider.dart';
-
 import '../../app/routes.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../core/providers/cart_provider.dart';
+import '../../core/providers/favorite_provider.dart';
 import '../../core/providers/smoothie_provider.dart';
 import '../../core/widgets/app_loader.dart';
 import '../../core/widgets/section_title.dart';
@@ -25,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Future.microtask(() async {
       await context.read<SmoothieProvider>().fetchSmoothies();
       await context.read<CartProvider>().fetchCart();
+      await context.read<FavoriteProvider>().fetchFavorites();
     });
   }
 
@@ -92,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onRefresh: () async {
                 await smoothieProvider.fetchSmoothies();
                 await context.read<CartProvider>().fetchCart();
+                await context.read<FavoriteProvider>().fetchFavorites();
               },
               child: ListView(
                 padding: const EdgeInsets.all(16),
@@ -151,6 +152,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                               if (!mounted) return;
                               await context.read<CartProvider>().fetchCart();
+                              await context.read<FavoriteProvider>().fetchFavorites();
                             },
                           ),
                         );
@@ -182,6 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                           if (!mounted) return;
                           await context.read<CartProvider>().fetchCart();
+                          await context.read<FavoriteProvider>().fetchFavorites();
                         },
                       );
                     },

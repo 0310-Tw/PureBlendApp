@@ -12,6 +12,7 @@ import '../features/favorites/favorites_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/orders/order_details_screen.dart';
 import '../features/product/smoothie_details_screen.dart';
+import '../features/profile/add_edit_address_screen.dart';
 import '../features/profile/addresses_screen.dart';
 import '../features/profile/edit_profile_screen.dart';
 import '../features/profile/profile_screen.dart';
@@ -33,6 +34,7 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String editProfile = '/edit-profile';
   static const String addresses = '/addresses';
+  static const String addEditAddress = '/add-edit-address';
   static const String settings = '/settings';
 
   static Map<String, WidgetBuilder> get routes => {
@@ -51,6 +53,7 @@ class AppRoutes {
         profile: (_) => const ProfileScreen(),
         editProfile: (_) => const EditProfileScreen(),
         addresses: (_) => const AddressesScreen(),
+        addEditAddress: (_) => const AddEditAddressScreen(),
         settings: (_) => const SettingsScreen(),
       };
 }

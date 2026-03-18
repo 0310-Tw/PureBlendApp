@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colours.dart';
-import 'package:frontend/core/services/cart_service.dart';
 import 'package:provider/provider.dart';
-
 import '../../app/routes.dart';
 import '../../core/models/smoothie_model.dart';
 import '../../core/providers/cart_provider.dart';
+import '../../core/providers/favorite_provider.dart';
 import '../../core/services/smoothie_service.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../core/utils/snackbars.dart';
@@ -40,6 +39,9 @@ class _SmoothieDetailsScreenState extends State<SmoothieDetailsScreen> {
     final smoothieId = ModalRoute.of(context)?.settings.arguments as int?;
     if (smoothieId != null && _smoothie == null) {
       _fetchSmoothie(smoothieId);
+      Future.microtask(() {
+        context.read<FavoriteProvider>().fetchFavorites();
+      });
     }
   }
 
@@ -117,14 +119,48 @@ class _SmoothieDetailsScreenState extends State<SmoothieDetailsScreen> {
     }
   }
 
+  Future<void> _toggleFavorite() async {
+    if (_smoothie == null) return;
+
+    final favoriteProvider = context.read<FavoriteProvider>();
+    final wasFavorite = favoriteProvider.isFavorite(_smoothie!.id);
+
+    try {
+      await favoriteProvider.toggleFavorite(_smoothie!.id);
+
+      if (!mounted) return;
+
+      AppSnackbars.showSuccess(
+        context,
+        wasFavorite ? 'Removed from favorites' : 'Added to favorites',
+      );
+    } catch (e) {
+      if (!mounted) return;
+      AppSnackbars.showError(
+        context,
+        e.toString().replaceFirst('Exception: ', ''),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final cartProvider = context.watch<CartProvider>();
+    final favoriteProvider = context.watch<FavoriteProvider>();
+    final isFavorite = _smoothie != null && favoriteProvider.isFavorite(_smoothie!.id);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Smoothie Details'),
         actions: [
+          if (_smoothie != null)
+            IconButton(
+              onPressed: favoriteProvider.isLoading ? null : _toggleFavorite,
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: isFavorite ? Colors.red : null,
+              ),
+            ),
           IconButton(
             onPressed: () {
               Navigator.pushNamed(context, AppRoutes.cart);

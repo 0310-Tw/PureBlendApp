@@ -17,10 +17,12 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    _user = await _authService.getCurrentUser();
-
-    _isLoading = false;
-    notifyListeners();
+    try {
+      _user = await _authService.getCurrentUser();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> login({
@@ -30,15 +32,17 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final result = await _authService.login(
-      email: email,
-      password: password,
-    );
+    try {
+      final result = await _authService.login(
+        email: email,
+        password: password,
+      );
 
-    _user = result['user'];
-
-    _isLoading = false;
-    notifyListeners();
+      _user = result['user'];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> register({
@@ -50,16 +54,23 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final result = await _authService.register(
-      fullName: fullName,
-      email: email,
-      phone: phone,
-      password: password,
-    );
+    try {
+      final result = await _authService.register(
+        fullName: fullName,
+        email: email,
+        phone: phone,
+        password: password,
+      );
 
-    _user = result['user'];
+      _user = result['user'];
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
-    _isLoading = false;
+  void setUser(UserModel? user) {
+    _user = user;
     notifyListeners();
   }
 

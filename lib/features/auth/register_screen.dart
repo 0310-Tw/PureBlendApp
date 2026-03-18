@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../app/routes.dart';
 import '../../core/providers/auth_provider.dart';
+import '../../core/providers/profile_provider.dart';
 import '../../core/utils/snackbars.dart';
 import '../../core/utils/validators.dart';
 import '../../core/widgets/custom_button.dart';
@@ -41,6 +42,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             phone: _phoneController.text.trim(),
             password: _passwordController.text.trim(),
           );
+
+      if (!mounted) return;
+
+      await context.read<ProfileProvider>().fetchProfile();
 
       if (!mounted) return;
       Navigator.pushNamedAndRemoveUntil(

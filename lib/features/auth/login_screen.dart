@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../app/routes.dart';
 import '../../core/providers/auth_provider.dart';
+import '../../core/providers/profile_provider.dart';
 import '../../core/utils/snackbars.dart';
 import '../../core/utils/validators.dart';
 import '../../core/widgets/custom_button.dart';
@@ -34,6 +35,10 @@ class _LoginScreenState extends State<LoginScreen> {
             email: _emailController.text.trim(),
             password: _passwordController.text.trim(),
           );
+
+      if (!mounted) return;
+
+      await context.read<ProfileProvider>().fetchProfile();
 
       if (!mounted) return;
       Navigator.pushNamedAndRemoveUntil(
