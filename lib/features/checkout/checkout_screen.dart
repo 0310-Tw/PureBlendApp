@@ -331,7 +331,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 color: AppColors.primaryOrange,
                               ),
                             ),
-                         ],
+                          ],
                         ),
                       ],
                     ),

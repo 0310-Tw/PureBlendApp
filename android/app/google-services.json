@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "708471987934",
+    "project_id": "pure-blend-smoothies",
+    "storage_bucket": "pure-blend-smoothies.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708471987934:android:fb14d7588b17d15306ec4f",
+        "android_client_info": {
+          "package_name": "com.example.pure_blend_smoothie_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjNCSAee63GD0LewPiBKga9hzG6VLhHYM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
