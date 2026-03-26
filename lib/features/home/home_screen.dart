@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: smoothieProvider.featuredSmoothies.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 12),
+                      separatorBuilder: (_, _) => const SizedBox(width: 12),
                       itemBuilder: (context, index) {
                         final smoothie = smoothieProvider.featuredSmoothies[index];
                         return SizedBox(

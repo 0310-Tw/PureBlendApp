@@ -190,7 +190,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       )
                     else
                       DropdownButtonFormField<int>(
-                        value: _selectedAddressId,
+                        initialValue: _selectedAddressId,
                         items: addressProvider.addresses.map((address) {
                           return DropdownMenuItem<int>(
                             value: address.id,
@@ -217,7 +217,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
-                    value: _paymentMethod,
+                    initialValue: _paymentMethod,
                     items: (_fulfillmentType == 'delivery'
                             ? const [
                                 DropdownMenuItem(
