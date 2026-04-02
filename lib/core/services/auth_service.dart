@@ -4,54 +4,25 @@ import 'package:http/http.dart' as http;
 
 import '../constants/api_constants.dart';
 import '../models/user_model.dart';
-import 'token_storage_service.dart';
 
 class AuthService {
-  final TokenStorageService _tokenStorageService = TokenStorageService();
-
-  Future<Map<String, dynamic>> login({
-    required String email,
-    required String password,
-  }) async {
-    final response = await http.post(
-      Uri.parse('${ApiConstants.baseUrl}/auth/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'email': email,
-        'password': password,
-      }),
-    );
-
-    final data = jsonDecode(response.body);
-
-    if (response.statusCode == 200 && data['success'] == true) {
-      final token = data['data']['token'];
-      final user = UserModel.fromJson(data['data']['user']);
-
-      await _tokenStorageService.saveToken(token);
-
-      return {
-        'token': token,
-        'user': user,
+  Map<String, String> get _headers => {
+        'Content-Type': 'application/json',
       };
-    }
-
-    throw Exception(data['message'] ?? 'Login failed');
-  }
 
   Future<Map<String, dynamic>> register({
-    required String fullName,
+    required String name,
     required String email,
     required String phone,
     required String password,
   }) async {
     final response = await http.post(
       Uri.parse('${ApiConstants.baseUrl}/auth/register'),
-      headers: {'Content-Type': 'application/json'},
+      headers: _headers,
       body: jsonEncode({
-        'full_name': fullName,
-        'email': email,
-        'phone': phone,
+        'name': name.trim(),
+        'email': email.trim(),
+        'phone': phone.trim(),
         'password': password,
       }),
     );
@@ -59,29 +30,45 @@ class AuthService {
     final data = jsonDecode(response.body);
 
     if (response.statusCode == 201 && data['success'] == true) {
-      final token = data['data']['token'];
-      final user = UserModel.fromJson(data['data']['user']);
-
-      await _tokenStorageService.saveToken(token);
-
       return {
-        'token': token,
-        'user': user,
+        'user': UserModel.fromJson(data['data']),
+        'token': data['token'],
       };
     }
 
     throw Exception(data['message'] ?? 'Registration failed');
   }
 
-  Future<UserModel?> getCurrentUser() async {
-    final token = await _tokenStorageService.getToken();
+  Future<Map<String, dynamic>> login({
+    required String email,
+    required String password,
+  }) async {
+    final response = await http.post(
+      Uri.parse('${ApiConstants.baseUrl}/auth/login'),
+      headers: _headers,
+      body: jsonEncode({
+        'email': email.trim(),
+        'password': password,
+      }),
+    );
 
-    if (token == null) return null;
+    final data = jsonDecode(response.body);
 
+    if (response.statusCode == 200 && data['success'] == true) {
+      return {
+        'user': UserModel.fromJson(data['data']),
+        'token': data['token'],
+      };
+    }
+
+    throw Exception(data['message'] ?? 'Login failed');
+  }
+
+  Future<UserModel> getProfile(String token) async {
     final response = await http.get(
-      Uri.parse('${ApiConstants.baseUrl}/auth/me'),
+      Uri.parse('${ApiConstants.baseUrl}/auth/profile'),
       headers: {
-        'Content-Type': 'application/json',
+        ..._headers,
         'Authorization': 'Bearer $token',
       },
     );
@@ -92,10 +79,52 @@ class AuthService {
       return UserModel.fromJson(data['data']);
     }
 
-    return null;
+    throw Exception(data['message'] ?? 'Failed to load profile');
   }
 
-  Future<void> logout() async {
-    await _tokenStorageService.clearToken();
+  Future<Map<String, dynamic>> forgotPassword({
+    required String email,
+  }) async {
+    final response = await http.post(
+      Uri.parse('${ApiConstants.baseUrl}/auth/forgot-password'),
+      headers: _headers,
+      body: jsonEncode({
+        'email': email.trim(),
+      }),
+    );
+
+    final data = jsonDecode(response.body);
+
+    if (response.statusCode == 200 && data['success'] == true) {
+      return {
+        'message': data['message'] ?? 'Reset token generated successfully.',
+        'resetToken': data['resetToken'],
+        'expiresAt': data['expiresAt'],
+      };
+    }
+
+    throw Exception(data['message'] ?? 'Forgot password failed');
+  }
+
+  Future<String> resetPassword({
+    required String token,
+    required String newPassword,
+  }) async {
+    final response = await http.post(
+      Uri.parse('${ApiConstants.baseUrl}/auth/reset-password'),
+      headers: _headers,
+      body: jsonEncode({
+        'token': token.trim(),
+        'newPassword': newPassword,
+      }),
+    );
+
+    final data = jsonDecode(response.body);
+
+    if (response.statusCode == 200 && data['success'] == true) {
+      return data['message'] ?? 'Password reset successful.';
+    }
+
+    throw Exception(data['message'] ?? 'Reset password failed');
   }
 }

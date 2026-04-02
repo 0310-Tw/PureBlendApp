@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colours.dart';
 import 'package:provider/provider.dart';
+
 import '../../app/routes.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../core/providers/favorite_provider.dart';
@@ -26,15 +27,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final profileProvider = context.watch<ProfileProvider>();
-    final authProvider = context.read<AuthProvider>();
     final user = profileProvider.profile;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(
+        title: const Text('Profile'),
+      ),
       body: profileProvider.isLoading
           ? const AppLoader()
           : user == null
-              ? const Center(child: Text('Profile not found'))
+              ? const Center(
+                  child: Text('Profile not found'),
+                )
               : RefreshIndicator(
                   onRefresh: () => profileProvider.fetchProfile(),
                   child: ListView(
@@ -50,7 +54,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             CircleAvatar(
                               radius: 38,
-                              backgroundColor: AppColors.primaryOrange.withOpacity(0.15),
+                              backgroundColor:
+                                  AppColors.primaryOrange.withOpacity(0.15),
                               child: const Icon(
                                 Icons.person,
                                 size: 38,
@@ -91,7 +96,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               title: const Text('Edit Profile'),
                               trailing: const Icon(Icons.chevron_right),
                               onTap: () async {
-                                await Navigator.pushNamed(context, AppRoutes.editProfile);
+                                await Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.editProfile,
+                                );
                                 if (!mounted) return;
                                 await context.read<ProfileProvider>().fetchProfile();
                               },
@@ -102,7 +110,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               title: const Text('Addresses'),
                               trailing: const Icon(Icons.chevron_right),
                               onTap: () {
-                                Navigator.pushNamed(context, AppRoutes.addresses);
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.addresses,
+                                );
                               },
                             ),
                             const Divider(height: 1),
@@ -111,7 +122,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               title: const Text('Settings'),
                               trailing: const Icon(Icons.chevron_right),
                               onTap: () async {
-                                await Navigator.pushNamed(context, AppRoutes.settings);
+                                await Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.settings,
+                                );
                                 if (!mounted) return;
                                 await context.read<ProfileProvider>().fetchProfile();
                               },
@@ -136,7 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 24),
                       ElevatedButton.icon(
                         onPressed: () async {
-                          await authProvider.logout();
+                          await context.read<AuthProvider>().logout();
                           context.read<ProfileProvider>().clearProfile();
                           context.read<FavoriteProvider>().clearFavorites();
 

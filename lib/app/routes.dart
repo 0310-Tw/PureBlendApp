@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/features/orders/order_screen.dart';
 
+import '../features/admin/admin_dashboard_screen.dart';
+import '../features/auth/forgot_password_screen.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/register_screen.dart';
+import '../features/auth/reset_password_screen.dart';
 import '../features/auth/splash_screen.dart';
 import '../features/auth/welcome_screen.dart';
 import '../features/cart/cart_screen.dart';
@@ -23,6 +26,8 @@ class AppRoutes {
   static const String welcome = '/welcome';
   static const String login = '/login';
   static const String register = '/register';
+  static const String forgotPassword = '/forgot-password';
+  static const String resetPassword = '/reset-password';
   static const String home = '/home';
   static const String smoothieDetails = '/smoothie-details';
   static const String favorites = '/favorites';
@@ -36,12 +41,15 @@ class AppRoutes {
   static const String addresses = '/addresses';
   static const String addEditAddress = '/add-edit-address';
   static const String settings = '/settings';
+  static const String admin = '/admin';
 
   static Map<String, WidgetBuilder> get routes => {
         splash: (_) => const SplashScreen(),
         welcome: (_) => const WelcomeScreen(),
         login: (_) => const LoginScreen(),
         register: (_) => const RegisterScreen(),
+        forgotPassword: (_) => const ForgotPasswordScreen(),
+        resetPassword: (_) => const ResetPasswordScreen(),
         home: (_) => const HomeScreen(),
         smoothieDetails: (_) => const SmoothieDetailsScreen(),
         favorites: (_) => const FavoritesScreen(),
@@ -55,5 +63,6 @@ class AppRoutes {
         addresses: (_) => const AddressesScreen(),
         addEditAddress: (_) => const AddEditAddressScreen(),
         settings: (_) => const SettingsScreen(),
+        admin: (_) => const AdminDashboardScreen(),
       };
 }

@@ -5,6 +5,7 @@ class UserModel {
   final String? phone;
   final String preferredFulfillment;
   final String? profileImageUrl;
+  final bool isAdmin;
 
   UserModel({
     required this.id,
@@ -13,6 +14,7 @@ class UserModel {
     this.phone,
     required this.preferredFulfillment,
     this.profileImageUrl,
+    required this.isAdmin,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class UserModel {
       phone: json['phone'],
       preferredFulfillment: json['preferred_fulfillment'] ?? 'delivery',
       profileImageUrl: json['profile_image_url'],
+      isAdmin: json['is_admin'] == 1 || json['is_admin'] == true,
     );
   }
 }

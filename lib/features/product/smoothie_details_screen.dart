@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/constants/app_colours.dart';
 import 'package:provider/provider.dart';
+import '../../../core/constants/app_assets.dart';
 import '../../app/routes.dart';
 import '../../core/models/smoothie_model.dart';
 import '../../core/providers/cart_provider.dart';
@@ -26,6 +27,19 @@ class _SmoothieDetailsScreenState extends State<SmoothieDetailsScreen> {
   bool _isLoading = true;
   String _selectedSize = 'small';
   int _quantity = 1;
+
+  static String getImageForSmoothie(String name) {
+    final lower = name.toLowerCase();
+    if (lower.contains('berry') || lower.contains('very')) return AppAssets.veryBerry;
+    if (lower.contains('blue') || lower.contains('tru')) return AppAssets.truBlue;
+    if (lower.contains('green') || lower.contains('machine')) return AppAssets.machineGreen;
+    if (lower.contains('island') || lower.contains('vibez')) return AppAssets.islandVibez;
+    if (lower.contains('granola') || lower.contains('punch')) return AppAssets.granolaPunch;
+    if (lower.contains('mango') || lower.contains('rich')) return AppAssets.richMango;
+    if (lower.contains('energy') || lower.contains('gaad')) return AppAssets.energyGaad;
+    if (lower.contains('power')) return AppAssets.powerPunch;
+    return AppAssets.placeholderSmoothie;
+  }
 
   @override
   void dispose() {
@@ -182,18 +196,30 @@ class _SmoothieDetailsScreenState extends State<SmoothieDetailsScreen> {
                         height: 240,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              AppColors.primaryOrange,
-                              AppColors.berryPink,
-                            ],
-                          ),
                           borderRadius: BorderRadius.circular(28),
                         ),
-                        child: const Icon(
-                          Icons.local_drink_rounded,
-                          size: 88,
-                          color: Colors.white,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(28),
+                          child: Image.asset(
+                            getImageForSmoothie(_smoothie!.name),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    AppColors.primaryOrange,
+                                    AppColors.berryPink,
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(28),
+                              ),
+                              child: const Icon(
+                                Icons.local_drink_rounded,
+                                size: 88,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20),

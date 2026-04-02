@@ -1,82 +1,102 @@
 import 'package:flutter/material.dart';
-
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
+import '../services/token_storage_service.dart';
 
 class AuthProvider extends ChangeNotifier {
-  final AuthService _authService = AuthService();
-
   UserModel? _user;
   bool _isLoading = false;
+  String? _error;
+  bool _isAdmin = false;
 
   UserModel? get user => _user;
   bool get isLoading => _isLoading;
   bool get isLoggedIn => _user != null;
+  bool get isAdmin => _isAdmin;
+  String? get error => _error;
 
-  Future<void> loadUser() async {
+  final AuthService _authService = AuthService();
+  final TokenStorageService _tokenStorage = TokenStorageService();
+
+  Future<void> setSession(UserModel user, String token) async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
 
     try {
-      _user = await _authService.getCurrentUser();
+      await _tokenStorage.saveToken(token);
+      _user = user;
+      _isAdmin = user.isAdmin;
+
+    } catch (e) {
+      _error = e.toString();
+      _user = null;
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> login({
-    required String email,
-    required String password,
-  }) async {
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      final result = await _authService.login(
-        email: email,
-        password: password,
-      );
-
-      _user = result['user'];
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> register({
-    required String fullName,
+  Future<Map<String, dynamic>> register({
+    required String name,
     required String email,
     required String phone,
     required String password,
   }) async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
 
     try {
       final result = await _authService.register(
-        fullName: fullName,
+        name: name,
         email: email,
         phone: phone,
         password: password,
       );
-
-      _user = result['user'];
-    } finally {
-      _isLoading = false;
+      await setSession(result['user'], result['token']);
+      return result;
+    } catch (e) {
+      _error = e.toString();
       notifyListeners();
+      rethrow;
     }
   }
 
-  void setUser(UserModel? user) {
-    _user = user;
+  Future<bool> loadUser() async {
+    return await checkAuthStatus();
+  }
+
+
+  Future<bool> checkAuthStatus() async {
+    _isLoading = true;
     notifyListeners();
+
+    try {
+      final token = await _tokenStorage.getToken();
+      if (token == null) {
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+
+      _user = await _authService.getProfile(token);
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      await logout();
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
   }
 
   Future<void> logout() async {
-    await _authService.logout();
+    await _tokenStorage.clearToken();
     _user = null;
+    _error = null;
     notifyListeners();
   }
 }
+
