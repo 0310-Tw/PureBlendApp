@@ -19,13 +19,44 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'],
-      fullName: json['full_name'] ?? '',
-      email: json['email'] ?? '',
-      phone: json['phone'],
-      preferredFulfillment: json['preferred_fulfillment'] ?? 'delivery',
-      profileImageUrl: json['profile_image_url'],
-      isAdmin: json['is_admin'] == 1 || json['is_admin'] == true,
+      id: _parseInt(json['id']),
+      fullName: (json['fullName'] ?? json['name'] ?? json['full_name'] ?? '')
+          .toString(),
+      email: (json['email'] ?? '').toString(),
+      phone: json['phone']?.toString(),
+      preferredFulfillment:
+          (json['preferredFulfillment'] ??
+                  json['preferred_fulfillment'] ??
+                  'delivery')
+              .toString(),
+      profileImageUrl:
+          (json['profileImageUrl'] ?? json['profile_image_url'])?.toString(),
+      isAdmin: _parseBool(json['isAdmin'] ?? json['is_admin'] ?? false),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'fullName': fullName,
+      'email': email,
+      'phone': phone,
+      'preferredFulfillment': preferredFulfillment,
+      'profileImageUrl': profileImageUrl,
+      'isAdmin': isAdmin,
+    };
+  }
+
+  static int _parseInt(dynamic value) {
+    if (value is int) return value;
+    return int.tryParse(value.toString()) ?? 0;
+  }
+
+  static bool _parseBool(dynamic value) {
+    if (value is bool) return value;
+    if (value is int) return value == 1;
+
+    final str = value.toString().toLowerCase().trim();
+    return str == 'true' || str == '1';
   }
 }

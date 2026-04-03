@@ -105,7 +105,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             if (authProvider.isAdmin) ...[
               const SizedBox(height: 32),
               const Text(
-                'Admin',
+                'Admin Tools',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -113,12 +113,59 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 12),
               Card(
-                child: ListTile(
-                  leading: const Icon(Icons.admin_panel_settings_outlined),
-                  title: const Text('Admin Dashboard'),
-                  subtitle: const Text('Manage orders, users, and smoothies'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: _openAdminDashboard,
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.admin_panel_settings_rounded, size: 24),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              'Admin Dashboard',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Manage orders, users, smoothies, and other admin actions from one place.',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                              ?.withOpacity(0.8),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: _openAdminDashboard,
+                          icon: const Icon(Icons.dashboard_customize_rounded),
+                          label: const Text('Open Admin Dashboard'),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(double.infinity, 52),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

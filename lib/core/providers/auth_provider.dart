@@ -27,10 +27,10 @@ class AuthProvider extends ChangeNotifier {
       await _tokenStorage.saveToken(token);
       _user = user;
       _isAdmin = user.isAdmin;
-
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceFirst('Exception: ', '');
       _user = null;
+      _isAdmin = false;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -54,10 +54,11 @@ class AuthProvider extends ChangeNotifier {
         phone: phone,
         password: password,
       );
+
       await setSession(result['user'], result['token']);
       return result;
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceFirst('Exception: ', '');
       notifyListeners();
       rethrow;
     }
@@ -67,20 +68,26 @@ class AuthProvider extends ChangeNotifier {
     return await checkAuthStatus();
   }
 
-
   Future<bool> checkAuthStatus() async {
     _isLoading = true;
+    _error = null;
     notifyListeners();
 
     try {
       final token = await _tokenStorage.getToken();
+
       if (token == null) {
+        _user = null;
+        _isAdmin = false;
         _isLoading = false;
         notifyListeners();
         return false;
       }
 
-      _user = await _authService.getProfile(token);
+      final profile = await _authService.getProfile(token);
+
+      _user = profile;
+      _isAdmin = profile.isAdmin;
       _isLoading = false;
       notifyListeners();
       return true;
@@ -96,7 +103,7 @@ class AuthProvider extends ChangeNotifier {
     await _tokenStorage.clearToken();
     _user = null;
     _error = null;
+    _isAdmin = false;
     notifyListeners();
   }
 }
-

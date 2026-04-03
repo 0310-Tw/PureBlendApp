@@ -9,10 +9,6 @@ class AdminDashboardScreen extends StatelessWidget {
     Navigator.pushNamed(context, '/admin-orders');
   }
 
-  void _openSmoothies(BuildContext context) {
-    Navigator.pushNamed(context, '/admin-smoothies');
-  }
-
   void _showComingSoon(BuildContext context, String feature) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -31,16 +27,16 @@ class AdminDashboardScreen extends StatelessWidget {
         onTap: () => _openOrders(context),
       ),
       _AdminCardData(
-        title: 'Manage Smoothies',
-        subtitle: 'Create, edit, delete and manage smoothie products.',
-        icon: Icons.local_drink_rounded,
-        onTap: () => _openSmoothies(context),
-      ),
-      _AdminCardData(
         title: 'Manage Users',
         subtitle: 'View and manage users when the UI is added.',
         icon: Icons.people_alt_rounded,
         onTap: () => _showComingSoon(context, 'Users'),
+      ),
+      _AdminCardData(
+        title: 'Manage Smoothies',
+        subtitle: 'Create, edit and delete smoothie products next.',
+        icon: Icons.local_drink_rounded,
+        onTap: () => _showComingSoon(context, 'Smoothies'),
       ),
     ];
 
@@ -81,14 +77,14 @@ class AdminDashboardScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Manage orders, smoothies, and prepare the rest of your admin tools from one place.',
+                    'Manage orders and prepare the rest of your admin tools from one place.',
                     style: TextStyle(
                       fontSize: 14,
                       color: Theme.of(context)
                           .textTheme
                           .bodyMedium
                           ?.color
-                          ?.withValues(alpha: 0.85),
+                          ?.withOpacity(0.85),
                     ),
                   ),
                 ],
@@ -143,36 +139,19 @@ class AdminDashboardScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _openOrders(context),
-                    icon: const Icon(Icons.list_alt_rounded),
-                    label: const Text('Orders'),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 52),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => _openOrders(context),
+                icon: const Icon(Icons.list_alt_rounded),
+                label: const Text('Open Orders Manager'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 52),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _openSmoothies(context),
-                    icon: const Icon(Icons.local_drink_rounded),
-                    label: const Text('Smoothies'),
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 52),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
         ),

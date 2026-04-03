@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/features/orders/order_screen.dart';
 
 import '../features/admin/admin_dashboard_screen.dart';
+import '../features/admin/admin_orders_screen.dart';
+import '../features/admin/admin_smoothies_screen.dart';
 import '../features/auth/forgot_password_screen.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/register_screen.dart';
@@ -42,6 +44,8 @@ class AppRoutes {
   static const String addEditAddress = '/add-edit-address';
   static const String settings = '/settings';
   static const String admin = '/admin';
+  static const String adminOrders = '/admin-orders';
+  static const String adminSmoothies = '/admin-smoothies';
 
   static Map<String, WidgetBuilder> get routes => {
         splash: (_) => const SplashScreen(),
@@ -64,5 +68,7 @@ class AppRoutes {
         addEditAddress: (_) => const AddEditAddressScreen(),
         settings: (_) => const SettingsScreen(),
         admin: (_) => const AdminDashboardScreen(),
+        adminOrders: (_) => const AdminOrdersScreen(),
+        adminSmoothies: (_) => const AdminSmoothiesScreen(),
       };
 }

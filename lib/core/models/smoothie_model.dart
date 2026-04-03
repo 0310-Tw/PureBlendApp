@@ -11,9 +11,9 @@ class SmoothieSizeModel {
 
   factory SmoothieSizeModel.fromJson(Map<String, dynamic> json) {
     return SmoothieSizeModel(
-      id: json['id'],
-      sizeName: json['size_name'] ?? '',
-      price: double.tryParse(json['price'].toString()) ?? 0,
+      id: _asInt(json['id']),
+      sizeName: json['size_name']?.toString() ?? '',
+      price: _asDouble(json['price']),
     );
   }
 }
@@ -46,21 +46,39 @@ class SmoothieModel {
   factory SmoothieModel.fromJson(Map<String, dynamic> json) {
     final rawSizes = json['sizes'] as List<dynamic>? ?? [];
 
+    final parsedId = _asInt(json['id']) ?? _asInt(json['smoothie_id']);
+
+    if (parsedId == null) {
+      throw Exception('Smoothie is missing a valid id. JSON: $json');
+    }
+
     return SmoothieModel(
-      id: json['id'],
-      name: json['name'] ?? '',
-      description: json['description'],
-      category: json['category'] ?? '',
-      imageUrl: json['image_url'],
+      id: parsedId,
+      name: json['name']?.toString() ?? '',
+      description: json['description']?.toString(),
+      category: json['category']?.toString() ?? '',
+      imageUrl: json['image_url']?.toString(),
       isFeatured: json['is_featured'] == 1 || json['is_featured'] == true,
-      startingPrice: double.tryParse(json['starting_price'].toString()) ?? 0,
-      smallPrice: json['small_price'] == null
-          ? null
-          : double.tryParse(json['small_price'].toString()),
-      largePrice: json['large_price'] == null
-          ? null
-          : double.tryParse(json['large_price'].toString()),
-      sizes: rawSizes.map((e) => SmoothieSizeModel.fromJson(e)).toList(),
+      startingPrice: _asDouble(json['starting_price']),
+      smallPrice: json['small_price'] == null ? null : _asDouble(json['small_price']),
+      largePrice: json['large_price'] == null ? null : _asDouble(json['large_price']),
+      sizes: rawSizes
+          .whereType<Map<String, dynamic>>()
+          .map((e) => SmoothieSizeModel.fromJson(e))
+          .toList(),
     );
   }
+}
+
+int? _asInt(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  return int.tryParse(value.toString());
+}
+
+double _asDouble(dynamic value) {
+  if (value == null) return 0;
+  if (value is double) return value;
+  if (value is int) return value.toDouble();
+  return double.tryParse(value.toString()) ?? 0;
 }
